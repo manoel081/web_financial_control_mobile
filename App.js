@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View, Text, ScrollView } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 
 class ErrorBoundary extends React.Component {
@@ -27,16 +28,17 @@ class ErrorBoundary extends React.Component {
         </View>
       );
     }
-
     return this.props.children;
   }
 }
 
 export default function App() {
   return (
-    <ErrorBoundary>
-      <StatusBar style="auto" />
-      <AppNavigator />
-    </ErrorBoundary>
+    <SafeAreaProvider>
+      <ErrorBoundary>
+        <StatusBar style="auto" />
+        <AppNavigator />
+      </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }
