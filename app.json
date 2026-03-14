@@ -16,7 +16,8 @@
       "package": "com.fincontrol.mobile"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-asset"
     ]
   }
 }
