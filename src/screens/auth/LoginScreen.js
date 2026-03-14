@@ -4,6 +4,7 @@ import {
   StyleSheet, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import authService from '../../services/authService';
 import { COLORS, SPACING, RADIUS, FONT } from '../../constants/theme';
@@ -15,6 +16,7 @@ export default function LoginScreen({ navigation }) {
   const [dataNascimento, setDataNascimento] = useState('');
   const [isRegister, setIsRegister] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [senhaVisivel, setSenhaVisivel] = useState(false);
 
   function formatDateInput(text) {
     const cleaned = text.replace(/\D/g, '');
@@ -52,7 +54,7 @@ export default function LoginScreen({ navigation }) {
 
       if (result.success) {
         await AsyncStorage.setItem('wf_currentUser', JSON.stringify(result.user));
-        navigation.replace('MainTabs');
+        navigation.getParent()?.replace('MainTabs');
       } else {
         Alert.alert('Erro', result.message || 'Falha na autenticação.');
       }
@@ -90,7 +92,20 @@ export default function LoginScreen({ navigation }) {
             <TextInput style={styles.input} placeholder="seu@email.com" placeholderTextColor="#aaa" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
 
             <Text style={styles.label}>Senha</Text>
-            <TextInput style={styles.input} placeholder="Mínimo 6 caracteres" placeholderTextColor="#aaa" value={senha} onChangeText={setSenha} secureTextEntry autoCapitalize="none" />
+            <View style={styles.inputRow}>
+              <TextInput
+                style={styles.inputFlex}
+                placeholder="Mínimo 6 caracteres"
+                placeholderTextColor="#aaa"
+                value={senha}
+                onChangeText={setSenha}
+                secureTextEntry={!senhaVisivel}
+                autoCapitalize="none"
+              />
+              <TouchableOpacity onPress={() => setSenhaVisivel(!senhaVisivel)} style={styles.eyeButton}>
+                <Ionicons name={senhaVisivel ? 'eye-off' : 'eye'} size={22} color="#aaa" />
+              </TouchableOpacity>
+            </View>
 
             <TouchableOpacity style={[styles.button, loading && styles.buttonDisabled]} onPress={handleAuth} disabled={loading}>
               <Text style={styles.buttonText}>{loading ? 'Aguarde...' : isRegister ? 'Criar Conta' : 'Entrar'}</Text>
@@ -121,6 +136,9 @@ const styles = StyleSheet.create({
   form: { width: '100%', maxWidth: 400 },
   label: { color: COLORS.textLight, fontSize: 14, fontWeight: '600', marginBottom: 6 },
   input: { backgroundColor: '#fff', borderRadius: RADIUS.sm, padding: 14, fontSize: 16, marginBottom: SPACING.md, color: COLORS.textPrimary },
+  inputRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: RADIUS.sm, marginBottom: SPACING.md },
+  inputFlex: { flex: 1, padding: 14, fontSize: 16, color: COLORS.textPrimary },
+  eyeButton: { paddingHorizontal: 14, paddingVertical: 14 },
   button: { backgroundColor: COLORS.success, borderRadius: RADIUS.sm, padding: 15, alignItems: 'center', marginTop: SPACING.sm },
   buttonDisabled: { backgroundColor: '#95E1B7' },
   buttonText: { color: '#fff', fontSize: FONT.lg, fontWeight: 'bold' },
